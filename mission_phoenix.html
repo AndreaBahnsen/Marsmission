@@ -1,0 +1,1179 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MISSION PHOENIX - Mars-Rettungsmission</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Courier New', monospace;
+            background: linear-gradient(135deg, #0a0a1a 0%, #1a0a2e 50%, #2d1b3d 100%);
+            color: #00ff88;
+            min-height: 100vh;
+            padding: 20px;
+            position: relative;
+        }
+
+        /* Sterne-Hintergrund */
+        .stars {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .star {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: white;
+            border-radius: 50%;
+            animation: twinkle 3s infinite;
+        }
+
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 1; }
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: rgba(10, 10, 30, 0.85);
+            border: 2px solid #00ff88;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 0 30px rgba(0, 255, 136, 0.3);
+            position: relative;
+            z-index: 1;
+        }
+
+        .header {
+            text-align: center;
+            border-bottom: 2px solid #00ff88;
+            padding-bottom: 20px;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            color: #ff0055;
+            text-shadow: 0 0 10px #ff0055;
+            margin-bottom: 10px;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
+        .timer-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(255, 0, 85, 0.1);
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #ff0055;
+        }
+
+        .timer {
+            font-size: 2em;
+            color: #ff0055;
+            font-weight: bold;
+        }
+
+        .progress-bar {
+            flex: 1;
+            height: 30px;
+            background: rgba(0, 0, 0, 0.5);
+            border-radius: 15px;
+            margin: 0 20px;
+            overflow: hidden;
+            border: 1px solid #00ff88;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #00ff88, #00ccff);
+            width: 0%;
+            transition: width 0.5s;
+            box-shadow: 0 0 10px #00ff88;
+        }
+
+        .section {
+            display: none;
+            animation: fadeIn 0.5s;
+        }
+
+        .section.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .mission-image {
+            width: 100%;
+            max-height: 300px;
+            object-fit: cover;
+            border-radius: 10px;
+            margin: 20px 0;
+            border: 2px solid #00ff88;
+            box-shadow: 0 0 20px rgba(0, 255, 136, 0.3);
+        }
+
+        .story-text {
+            line-height: 1.8;
+            margin: 20px 0;
+            padding: 20px;
+            background: rgba(0, 255, 136, 0.05);
+            border-left: 4px solid #00ff88;
+            border-radius: 5px;
+        }
+
+        .alert-box {
+            background: rgba(255, 0, 85, 0.2);
+            border: 2px solid #ff0055;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 20px 0;
+            text-align: center;
+            font-size: 1.2em;
+            animation: alertPulse 1.5s infinite;
+        }
+
+        @keyframes alertPulse {
+            0%, 100% { box-shadow: 0 0 10px rgba(255, 0, 85, 0.5); }
+            50% { box-shadow: 0 0 25px rgba(255, 0, 85, 0.8); }
+        }
+
+        .puzzle-box {
+            background: rgba(0, 100, 200, 0.1);
+            border: 2px solid #00ccff;
+            padding: 25px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+
+        .puzzle-title {
+            color: #00ccff;
+            font-size: 1.5em;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            background: rgba(0, 0, 0, 0.3);
+        }
+
+        th, td {
+            border: 1px solid #00ff88;
+            padding: 12px;
+            text-align: left;
+        }
+
+        th {
+            background: rgba(0, 255, 136, 0.2);
+            color: #00ccff;
+        }
+
+        input[type="text"], input[type="number"] {
+            background: rgba(0, 0, 0, 0.7);
+            border: 2px solid #00ff88;
+            color: #00ff88;
+            padding: 10px;
+            border-radius: 5px;
+            font-family: 'Courier New', monospace;
+            font-size: 1em;
+            width: 100%;
+            margin: 5px 0;
+        }
+
+        input[type="text"]:focus, input[type="number"]:focus {
+            outline: none;
+            box-shadow: 0 0 10px #00ff88;
+        }
+
+        button {
+            background: linear-gradient(135deg, #00ff88, #00ccff);
+            border: none;
+            color: #0a0a1a;
+            padding: 15px 30px;
+            font-size: 1.1em;
+            font-weight: bold;
+            border-radius: 10px;
+            cursor: pointer;
+            margin: 10px 5px;
+            font-family: 'Courier New', monospace;
+            transition: all 0.3s;
+            box-shadow: 0 0 15px rgba(0, 255, 136, 0.5);
+        }
+
+        button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 25px rgba(0, 255, 136, 0.8);
+        }
+
+        button:active {
+            transform: scale(0.95);
+        }
+
+        .code-input-container {
+            text-align: center;
+            margin: 30px 0;
+        }
+
+        .code-input {
+            font-size: 2em !important;
+            text-align: center;
+            max-width: 300px;
+            margin: 10px auto;
+            display: block;
+            text-transform: uppercase;
+        }
+
+        .feedback {
+            padding: 15px;
+            border-radius: 10px;
+            margin: 20px 0;
+            text-align: center;
+            font-size: 1.1em;
+            display: none;
+        }
+
+        .feedback.success {
+            background: rgba(0, 255, 136, 0.2);
+            border: 2px solid #00ff88;
+            color: #00ff88;
+            display: block;
+        }
+
+        .feedback.error {
+            background: rgba(255, 0, 85, 0.2);
+            border: 2px solid #ff0055;
+            color: #ff0055;
+            display: block;
+        }
+
+        .hint-box {
+            background: rgba(255, 200, 0, 0.1);
+            border: 2px solid #ffcc00;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 15px 0;
+            color: #ffcc00;
+        }
+
+        .formula-input {
+            display: inline-block;
+            width: 60px;
+            text-align: center;
+        }
+
+        .victory-screen {
+            text-align: center;
+            padding: 40px;
+        }
+
+        .victory-screen h2 {
+            font-size: 3em;
+            color: #00ff88;
+            text-shadow: 0 0 20px #00ff88;
+            margin-bottom: 20px;
+            animation: victoryPulse 1s infinite;
+        }
+
+        @keyframes victoryPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        .emoji {
+            font-size: 3em;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+            }
+            
+            .header h1 {
+                font-size: 1.8em;
+            }
+            
+            .timer {
+                font-size: 1.5em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Sterne-Hintergrund -->
+    <div class="stars" id="stars"></div>
+
+    <div class="container">
+        <div class="header">
+            <h1>🚀 MISSION PHOENIX 🚀</h1>
+            <p>Mars-Kolonie Rettungsmission</p>
+        </div>
+
+        <div class="timer-container">
+            <div>⏰ Verbleibende Zeit:</div>
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+            <div class="timer" id="timer">80:00</div>
+        </div>
+
+        <!-- Einleitung -->
+        <div class="section active" id="intro">
+            <img src="bilder/satellit_mars.jpg" alt="Mars Satellit" class="mission-image">
+            
+            <div class="alert-box">
+                ⚠️ NOTFALL-ÜBERTRAGUNG ⚠️<br>
+                PHOENIX BASE - MARS ORBIT
+            </div>
+
+            <div class="story-text">
+                <p><strong>Datum:</strong> 31. Oktober 2085, 14:47 UTC</p>
+                <p><strong>Status:</strong> KRITISCHER NOTFALL</p>
+                <br>
+                <p>Hier spricht das Kontrollzentrum der Mars-Besiedlungsmission!</p>
+                <br>
+                <p>Der Orbitalstation-Satellit <strong>"PHOENIX"</strong>, der die Lebenserhaltungssysteme für 50 Kolonisten auf dem Mars steuert, ist seit 15 Minuten offline. Alle Systeme sind ausgefallen:</p>
+                <br>
+                <p>🔴 Lebenserhaltung: OFFLINE<br>
+                🔴 Wasserproduktion: OFFLINE<br>
+                🔴 Atmosphärenkontrolle: OFFLINE<br>
+                🔴 Energieversorgung: OFFLINE<br>
+                🔴 Kommunikation: OFFLINE</p>
+                <br>
+                <p><strong>Die Kolonisten haben nur noch 80 Minuten Sauerstoffreserven!</strong></p>
+                <br>
+                <p>Ihr seid das Notfall-Reparaturteam! Eure Kapsel hat gerade am Satelliten angedockt. Im Chemie-Labor des Satelliten müsst ihr 5 kritische Reaktoren reparieren, indem ihr die richtigen chemischen Verbindungen herstellt und Reaktionen korrigiert.</p>
+                <br>
+                <p>Jedes gelöste Rätsel reaktiviert ein System. Am Ende müsst ihr den Hauptcode eingeben, um alle Systeme neu zu starten!</p>
+                <br>
+                <p><strong>🚨 Zeit läuft! Die Mars-Kolonie zählt auf euch! 🚨</strong></p>
+            </div>
+
+            <div style="text-align: center;">
+                <button onclick="startMission()">🚀 MISSION STARTEN</button>
+            </div>
+        </div>
+
+        <!-- Rätsel 1: AlCl3 -->
+        <div class="section" id="puzzle1">
+            <img src="bilder/lebenserhaltung.jpg" alt="Lebenserhaltungs-Reaktor" class="mission-image">
+            
+            <div class="alert-box">
+                🔴 SYSTEM 1: LEBENSERHALTUNG OFFLINE
+            </div>
+
+            <div class="story-text">
+                <p>Ihr schwebt durch die Luftschleuse in das Hauptlabor des Satelliten. Rote Warnlichter blinken überall.</p>
+                <p>Vor euch steht der <strong>LEBENSERHALTUNGS-REAKTOR</strong>. Auf dem Display erscheint eine Nachricht:</p>
+            </div>
+
+            <div class="puzzle-box">
+                <div class="puzzle-title">⚗️ REAKTOR-REPARATUR: LEBENSERHALTUNG</div>
+                
+                <div class="story-text">
+                    <p><strong>"KRITISCHER FEHLER IM CHLORID-SYNTHESIZER!"</strong></p>
+                    <p>Der Reaktor benötigt <strong>Aluminiumchlorid (AlCl₃)</strong> zur Luftreinigung. Die Syntheseeinheit ist beschädigt!</p>
+                    <br>
+                    <p><strong>EURE AUFGABE:</strong></p>
+                    <p>1️⃣ Bestimmt die Ionenladungen von Aluminium und Chlor<br>
+                    2️⃣ Bildet die korrekte Formel von Aluminiumchlorid<br>
+                    3️⃣ Gleicht die Reaktionsgleichung aus</p>
+                </div>
+
+                <h3 style="color: #00ccff; margin: 20px 0;">Schritt 1: Ionenladungen bestimmen</h3>
+                <table>
+                    <tr>
+                        <th>Element</th>
+                        <th>Symbol</th>
+                        <th>Ordnungszahl</th>
+                        <th>Hauptgruppe</th>
+                        <th>Ionenladung</th>
+                    </tr>
+                    <tr>
+                        <td>Aluminium</td>
+                        <td>Al</td>
+                        <td>13</td>
+                        <td><input type="number" id="p1_hg_al" class="formula-input"></td>
+                        <td>Al<sup><input type="text" id="p1_ion_al" class="formula-input" placeholder="?"></sup></td>
+                    </tr>
+                    <tr>
+                        <td>Chlor</td>
+                        <td>Cl</td>
+                        <td>17</td>
+                        <td><input type="number" id="p1_hg_cl" class="formula-input"></td>
+                        <td>Cl<sup><input type="text" id="p1_ion_cl" class="formula-input" placeholder="?"></sup></td>
+                    </tr>
+                </table>
+
+                <div class="hint-box">
+                    💡 <strong>TIPP:</strong> Metalle der 3. Hauptgruppe werden zu 3-fach positiven Ionen (3+). Halogene (7. HG) werden zu 1-fach negativen Ionen (1-)!
+                </div>
+
+                <h3 style="color: #00ccff; margin: 20px 0;">Schritt 2: Formel bilden</h3>
+                <div class="story-text">
+                    <p>Die Ladungen müssen ausgeglichen sein! Wie viele Aluminium- und Chlor-Ionen brauchst du?</p>
+                    <p style="text-align: center; font-size: 1.5em; margin: 20px 0;">
+                        Al<sub><input type="number" id="p1_al_index" class="formula-input"></sub>
+                        Cl<sub><input type="number" id="p1_cl_index" class="formula-input"></sub>
+                    </p>
+                </div>
+
+                <h3 style="color: #00ccff; margin: 20px 0;">Schritt 3: Reaktionsgleichung ausgleichen</h3>
+                <div class="story-text">
+                    <p>Die Synthesereaktion für Aluminiumchlorid:</p>
+                    <p style="text-align: center; font-size: 1.3em; margin: 20px 0;">
+                        <input type="number" id="p1_coef_al" class="formula-input"> Al + 
+                        <input type="number" id="p1_coef_cl2" class="formula-input"> Cl₂ → 
+                        <input type="number" id="p1_coef_alcl3" class="formula-input"> AlCl₃
+                    </p>
+                </div>
+
+                <div class="hint-box">
+                    💡 <strong>TIPP:</strong> Zähle die Atome auf beiden Seiten! Sie müssen gleich sein.
+                </div>
+            </div>
+
+            <div class="code-input-container">
+                <h3 style="color: #00ccff;">🔐 REAKTOR-AKTIVIERUNGSCODE</h3>
+                <p>Wenn alles korrekt ist, gibt der Reaktor einen 4-stelligen Code aus:</p>
+                <p style="color: #ffcc00;">Code = [Hauptgruppe von Al][Koeffizient von Al][Koeffizient von Cl₂][Koeffizient von AlCl₃]</p>
+                <input type="text" id="code1" class="code-input" maxlength="4" placeholder="____">
+                <br>
+                <button onclick="checkPuzzle1()">🔓 CODE EINGEBEN</button>
+            </div>
+
+            <div id="feedback1" class="feedback"></div>
+        </div>
+
+        <!-- Rätsel 2: Ca3N2 -->
+        <div class="section" id="puzzle2">
+            <img src="bilder/wasserproduktion.jpg" alt="Wasser-Reaktor" class="mission-image">
+            
+            <div class="alert-box">
+                🔴 SYSTEM 2: WASSERPRODUKTION OFFLINE
+            </div>
+
+            <div class="story-text">
+                <p>✅ <strong>SYSTEM 1 REAKTIVIERT!</strong> Die Lebenserhaltung läuft wieder!</p>
+                <p>Ihr eilt zum nächsten Reaktor. Der <strong>WASSERPRODUKTIONS-REAKTOR</strong> zeigt eine Fehlermeldung:</p>
+            </div>
+
+            <div class="puzzle-box">
+                <div class="puzzle-title">💧 REAKTOR-REPARATUR: WASSERPRODUKTION</div>
+                
+                <div class="story-text">
+                    <p><strong>"NITRID-FILTER BESCHÄDIGT!"</strong></p>
+                    <p>Der Wasserfilter verwendet <strong>Calciumnitrid (Ca₃N₂)</strong>. Die Formel ist korrupt!</p>
+                    <br>
+                    <p><strong>EURE AUFGABE:</strong></p>
+                    <p>1️⃣ Bestimmt die Ionenladungen von Calcium und Stickstoff<br>
+                    2️⃣ Leitet die korrekte Formel her<br>
+                    3️⃣ Gleicht die Synthesereaktion aus</p>
+                </div>
+
+                <h3 style="color: #00ccff; margin: 20px 0;">Schritt 1: Ionenladungen</h3>
+                <table>
+                    <tr>
+                        <th>Element</th>
+                        <th>Symbol</th>
+                        <th>Ordnungszahl</th>
+                        <th>Hauptgruppe</th>
+                        <th>Ionenladung</th>
+                    </tr>
+                    <tr>
+                        <td>Calcium</td>
+                        <td>Ca</td>
+                        <td>20</td>
+                        <td><input type="number" id="p2_hg_ca" class="formula-input"></td>
+                        <td>Ca<sup><input type="text" id="p2_ion_ca" class="formula-input" placeholder="?"></sup></td>
+                    </tr>
+                    <tr>
+                        <td>Stickstoff</td>
+                        <td>N</td>
+                        <td>7</td>
+                        <td><input type="number" id="p2_hg_n" class="formula-input"></td>
+                        <td>N<sup><input type="text" id="p2_ion_n" class="formula-input" placeholder="?"></sup></td>
+                    </tr>
+                </table>
+
+                <div class="hint-box">
+                    💡 <strong>TIPP:</strong> Calcium ist ein Erdalkalimetall (2. HG) → 2+ Ion. Stickstoff (5. HG) nimmt 3 Elektronen auf → 3- Ion!
+                </div>
+
+                <h3 style="color: #00ccff; margin: 20px 0;">Schritt 2: Formel von Calciumnitrid</h3>
+                <div class="story-text">
+                    <p>Gleiche die Ladungen aus! (Tipp: 3×(2+) = 6+  und  2×(3-) = 6-)</p>
+                    <p style="text-align: center; font-size: 1.5em; margin: 20px 0;">
+                        Ca<sub><input type="number" id="p2_ca_index" class="formula-input"></sub>
+                        N<sub><input type="number" id="p2_n_index" class="formula-input"></sub>
+                    </p>
+                </div>
+
+                <h3 style="color: #00ccff; margin: 20px 0;">Schritt 3: Reaktionsgleichung</h3>
+                <div class="story-text">
+                    <p>Synthese von Calciumnitrid:</p>
+                    <p style="text-align: center; font-size: 1.3em; margin: 20px 0;">
+                        <input type="number" id="p2_coef_ca" class="formula-input"> Ca + 
+                        <input type="number" id="p2_coef_n2" class="formula-input"> N₂ → 
+                        <input type="number" id="p2_coef_ca3n2" class="formula-input"> Ca₃N₂
+                    </p>
+                </div>
+            </div>
+
+            <div class="code-input-container">
+                <h3 style="color: #00ccff;">🔐 REAKTOR-AKTIVIERUNGSCODE</h3>
+                <p style="color: #ffcc00;">Code = [Index von Ca][Index von N][Koeffizient von Ca][Koeffizient von N₂]</p>
+                <input type="text" id="code2" class="code-input" maxlength="4" placeholder="____">
+                <br>
+                <button onclick="checkPuzzle2()">🔓 CODE EINGEBEN</button>
+            </div>
+
+            <div id="feedback2" class="feedback"></div>
+        </div>
+
+        <!-- Rätsel 3: NH3 -->
+        <div class="section" id="puzzle3">
+            <img src="bilder/atmosphaere.jpg" alt="Atmosphären-Reaktor" class="mission-image">
+            
+            <div class="alert-box">
+                🔴 SYSTEM 3: ATMOSPHÄRENKONTROLLE OFFLINE
+            </div>
+
+            <div class="story-text">
+                <p>✅ <strong>SYSTEM 2 REAKTIVIERT!</strong> Wasser wird wieder produziert!</p>
+                <p>Der dritte Reaktor wartet: <strong>ATMOSPHÄRENKONTROLLE</strong></p>
+            </div>
+
+            <div class="puzzle-box">
+                <div class="puzzle-title">🌫️ REAKTOR-REPARATUR: ATMOSPHÄRENKONTROLLE</div>
+                
+                <div class="story-text">
+                    <p><strong>"AMMONIAK-SYNTHESIZER FEHLFUNKTION!"</strong></p>
+                    <p>Die Atmosphärenreinigung benötigt <strong>Ammoniak (NH₃)</strong> - eine Elektronenpaarbindung!</p>
+                    <br>
+                    <p><strong>EURE AUFGABE:</strong></p>
+                    <p>1️⃣ Zeichnet die Lewis-Formel von NH₃<br>
+                    2️⃣ Bestimmt die Anzahl der Bindungen<br>
+                    3️⃣ Gleicht die Haber-Bosch-Reaktion aus</p>
+                </div>
+
+                <h3 style="color: #00ccff; margin: 20px 0;">Schritt 1: Lewis-Formel von NH₃</h3>
+                <table>
+                    <tr>
+                        <th>Element</th>
+                        <th>Valenzelektronen</th>
+                        <th>Gewünschte Elektronen (Edelgas)</th>
+                        <th>Benötigte Bindungen</th>
+                    </tr>
+                    <tr>
+                        <td>Stickstoff (N)</td>
+                        <td><input type="number" id="p3_ve_n" class="formula-input"></td>
+                        <td>8</td>
+                        <td><input type="number" id="p3_bonds_n" class="formula-input"></td>
+                    </tr>
+                    <tr>
+                        <td>Wasserstoff (H)</td>
+                        <td><input type="number" id="p3_ve_h" class="formula-input"></td>
+                        <td>2</td>
+                        <td><input type="number" id="p3_bonds_h" class="formula-input"></td>
+                    </tr>
+                </table>
+
+                <div class="hint-box">
+                    💡 <strong>TIPP:</strong> N ist in der 5. HG → 5 Valenzelektronen, braucht 3 mehr. H hat 1 Valenzelektron, braucht 1 mehr!
+                </div>
+
+                <h3 style="color: #00ccff; margin: 20px 0;">Schritt 2: Molekülformel</h3>
+                <div class="story-text">
+                    <p>Wie viele H-Atome binden sich an ein N-Atom?</p>
+                    <p style="text-align: center; font-size: 1.5em; margin: 20px 0;">
+                        NH<sub><input type="number" id="p3_h_index" class="formula-input"></sub>
+                    </p>
+                </div>
+
+                <h3 style="color: #00ccff; margin: 20px 0;">Schritt 3: Haber-Bosch-Reaktion</h3>
+                <div class="story-text">
+                    <p>Die berühmte Ammoniak-Synthese:</p>
+                    <p style="text-align: center; font-size: 1.3em; margin: 20px 0;">
+                        <input type="number" id="p3_coef_n2" class="formula-input"> N₂ + 
+                        <input type="number" id="p3_coef_h2" class="formula-input"> H₂ → 
+                        <input type="number" id="p3_coef_nh3" class="formula-input"> NH₃
+                    </p>
+                </div>
+            </div>
+
+            <div class="code-input-container">
+                <h3 style="color: #00ccff;">🔐 REAKTOR-AKTIVIERUNGSCODE</h3>
+                <p style="color: #ffcc00;">Code = [Valenzelektronen von N][Index von H in NH₃][Koeffizient N₂][Koeffizient H₂]</p>
+                <input type="text" id="code3" class="code-input" maxlength="4" placeholder="____">
+                <br>
+                <button onclick="checkPuzzle3()">🔓 CODE EINGEBEN</button>
+            </div>
+
+            <div id="feedback3" class="feedback"></div>
+        </div>
+
+        <!-- Rätsel 4: PCl3 -->
+        <div class="section" id="puzzle4">
+            <img src="bilder/energie.jpg" alt="Energie-Reaktor" class="mission-image">
+            
+            <div class="alert-box">
+                🔴 SYSTEM 4: ENERGIEVERSORGUNG OFFLINE
+            </div>
+
+            <div class="story-text">
+                <p>✅ <strong>SYSTEM 3 REAKTIVIERT!</strong> Die Atmosphäre wird stabilisiert!</p>
+                <p>Nur noch zwei Systeme! Der <strong>ENERGIEVERSORGUNG-REAKTOR</strong> erwartet euch:</p>
+            </div>
+
+            <div class="puzzle-box">
+                <div class="puzzle-title">⚡ REAKTOR-REPARATUR: ENERGIEVERSORGUNG</div>
+                
+                <div class="story-text">
+                    <p><strong>"PHOSPHORTRICHLORID-KATALYSATOR DEFEKT!"</strong></p>
+                    <p>Der Energiereaktor nutzt <strong>Phosphortrichlorid (PCl₃)</strong> als Katalysator!</p>
+                    <br>
+                    <p><strong>EURE AUFGABE:</strong></p>
+                    <p>1️⃣ Analysiert die Elektronenpaarbindung in PCl₃<br>
+                    2️⃣ Bestimmt die Molekülstruktur<br>
+                    3️⃣ Gleicht die Synthesereaktion aus</p>
+                </div>
+
+                <h3 style="color: #00ccff; margin: 20px 0;">Schritt 1: Valenzelektronen und Bindungen</h3>
+                <table>
+                    <tr>
+                        <th>Element</th>
+                        <th>Hauptgruppe</th>
+                        <th>Valenzelektronen</th>
+                        <th>Anzahl Bindungen im Molekül</th>
+                    </tr>
+                    <tr>
+                        <td>Phosphor (P)</td>
+                        <td><input type="number" id="p4_hg_p" class="formula-input"></td>
+                        <td><input type="number" id="p4_ve_p" class="formula-input"></td>
+                        <td><input type="number" id="p4_bonds_p" class="formula-input"></td>
+                    </tr>
+                    <tr>
+                        <td>Chlor (Cl)</td>
+                        <td><input type="number" id="p4_hg_cl" class="formula-input"></td>
+                        <td><input type="number" id="p4_ve_cl" class="formula-input"></td>
+                        <td><input type="number" id="p4_bonds_cl" class="formula-input"></td>
+                    </tr>
+                </table>
+
+                <div class="hint-box">
+                    💡 <strong>TIPP:</strong> P ist in der 5. HG (wie N!), Cl in der 7. HG. P braucht 3 weitere Elektronen, jedes Cl braucht 1!
+                </div>
+
+                <h3 style="color: #00ccff; margin: 20px 0;">Schritt 2: Molekülformel</h3>
+                <div class="story-text">
+                    <p>Wie viele Chlor-Atome binden sich an ein Phosphor-Atom?</p>
+                    <p style="text-align: center; font-size: 1.5em; margin: 20px 0;">
+                        PCl<sub><input type="number" id="p4_cl_index" class="formula-input"></sub>
+                    </p>
+                </div>
+
+                <h3 style="color: #00ccff; margin: 20px 0;">Schritt 3: Synthesereaktion</h3>
+                <div class="story-text">
+                    <p>Phosphor reagiert mit Chlorgas:</p>
+                    <p style="text-align: center; font-size: 1.3em; margin: 20px 0;">
+                        <input type="number" id="p4_coef_p4" class="formula-input"> P₄ + 
+                        <input type="number" id="p4_coef_cl2" class="formula-input"> Cl₂ → 
+                        <input type="number" id="p4_coef_pcl3" class="formula-input"> PCl₃
+                    </p>
+                </div>
+
+                <div class="hint-box">
+                    💡 <strong>TIPP:</strong> P₄ bedeutet 4 Phosphor-Atome! Berechne, wie viel Cl₂ für 4 PCl₃ Moleküle nötig ist!
+                </div>
+            </div>
+
+            <div class="code-input-container">
+                <h3 style="color: #00ccff;">🔐 REAKTOR-AKTIVIERUNGSCODE</h3>
+                <p style="color: #ffcc00;">Code = [HG von P][Index von Cl][Koeffizient P₄][Koeffizient Cl₂]</p>
+                <input type="text" id="code4" class="code-input" maxlength="4" placeholder="____">
+                <br>
+                <button onclick="checkPuzzle4()">🔓 CODE EINGEBEN</button>
+            </div>
+
+            <div id="feedback4" class="feedback"></div>
+        </div>
+
+        <!-- Rätsel 5: Finale -->
+        <div class="section" id="puzzle5">
+            <img src="bilder/kommunikation.jpg" alt="Kommunikations-Reaktor" class="mission-image">
+            
+            <div class="alert-box">
+                🔴 SYSTEM 5: KOMMUNIKATION OFFLINE
+            </div>
+
+            <div class="story-text">
+                <p>✅ <strong>SYSTEM 4 REAKTIVIERT!</strong> Die Energie fließt wieder!</p>
+                <p>Das letzte System! Der <strong>KOMMUNIKATIONS-REAKTOR</strong> muss repariert werden!</p>
+            </div>
+
+            <div class="puzzle-box">
+                <div class="puzzle-title">📡 FINALE REPARATUR: KOMMUNIKATION</div>
+                
+                <div class="story-text">
+                    <p><strong>"WASSER-ELEKTROLYSE UNTERBROCHEN!"</strong></p>
+                    <p>Die Kommunikationsantennen werden durch <strong>Wasserstoff aus der Wasser-Elektrolyse</strong> gekühlt!</p>
+                    <br>
+                    <p><strong>EURE FINALE AUFGABE:</strong></p>
+                    <p>Gleicht die Elektrolyse-Reaktion von Wasser aus!</p>
+                </div>
+
+                <h3 style="color: #00ccff; margin: 20px 0;">Wasser-Elektrolyse</h3>
+                <div class="story-text">
+                    <p>Wasser wird durch elektrischen Strom in seine Bestandteile zerlegt:</p>
+                    <p style="text-align: center; font-size: 1.3em; margin: 20px 0;">
+                        <input type="number" id="p5_coef_h2o" class="formula-input"> H₂O → 
+                        <input type="number" id="p5_coef_h2" class="formula-input"> H₂ + 
+                        <input type="number" id="p5_coef_o2" class="formula-input"> O₂
+                    </p>
+                </div>
+
+                <div class="hint-box">
+                    💡 <strong>TIPP:</strong> Zähle sorgfältig! Auf der linken Seite hast du H₂O-Moleküle, rechts entstehen H₂ und O₂!
+                </div>
+            </div>
+
+            <div class="code-input-container">
+                <h3 style="color: #00ccff;">🔐 REAKTOR-AKTIVIERUNGSCODE</h3>
+                <p style="color: #ffcc00;">Code = [Koeffizient H₂O][Koeffizient H₂][Koeffizient O₂]</p>
+                <input type="text" id="code5" class="code-input" maxlength="3" placeholder="___">
+                <br>
+                <button onclick="checkPuzzle5()">🔓 CODE EINGEBEN</button>
+            </div>
+
+            <div id="feedback5" class="feedback"></div>
+        </div>
+
+        <!-- Finale Eingabe -->
+        <div class="section" id="finale">
+            <img src="bilder/hauptkonsole.jpg" alt="Hauptkonsole" class="mission-image">
+            
+            <div class="alert-box" style="background: rgba(0, 255, 136, 0.2); border-color: #00ff88;">
+                ✅ ALLE 5 SYSTEME REAKTIVIERT!
+            </div>
+
+            <div class="story-text">
+                <p>🎉 <strong>UNGLAUBLICH! Ihr habt es geschafft!</strong></p>
+                <br>
+                <p>Alle fünf Reaktoren laufen wieder! Aber es gibt noch ein Problem:</p>
+                <p>Die Systeme laufen im <strong>NOTFALL-MODUS</strong>. Um sie dauerhaft zu aktivieren, müsst ihr den <strong>HAUPTCODE</strong> in die Zentrale eingeben!</p>
+                <br>
+                <p>Auf dem Hauptbildschirm erscheint eine Anweisung:</p>
+            </div>
+
+            <div class="puzzle-box">
+                <div class="puzzle-title">🎯 HAUPTCODE-GENERIERUNG</div>
+                
+                <div class="story-text">
+                    <p><strong>"MASTER-RESET ERFORDERLICH!"</strong></p>
+                    <br>
+                    <p>Der Hauptcode setzt sich aus allen 5 Reaktor-Codes zusammen:</p>
+                    <br>
+                    <table>
+                        <tr>
+                            <th>System</th>
+                            <th>Code</th>
+                        </tr>
+                        <tr>
+                            <td>🟢 Lebenserhaltung (AlCl₃)</td>
+                            <td id="display_code1">____</td>
+                        </tr>
+                        <tr>
+                            <td>🟢 Wasserproduktion (Ca₃N₂)</td>
+                            <td id="display_code2">____</td>
+                        </tr>
+                        <tr>
+                            <td>🟢 Atmosphärenkontrolle (NH₃)</td>
+                            <td id="display_code3">____</td>
+                        </tr>
+                        <tr>
+                            <td>🟢 Energieversorgung (PCl₃)</td>
+                            <td id="display_code4">____</td>
+                        </tr>
+                        <tr>
+                            <td>🟢 Kommunikation (H₂O-Elektrolyse)</td>
+                            <td id="display_code5">___</td>
+                        </tr>
+                    </table>
+                    <br>
+                    <p style="text-align: center; font-size: 1.3em; color: #ffcc00;">
+                        <strong>HAUPTCODE = Code1 + Code2 + Code3 + Code4 + Code5</strong>
+                    </p>
+                </div>
+            </div>
+
+            <div class="code-input-container">
+                <h3 style="color: #ff0055;">🚨 MASTER-RESET CODE 🚨</h3>
+                <p>Gebt den vollständigen Hauptcode ein (ohne Leerzeichen):</p>
+                <input type="text" id="masterCode" class="code-input" maxlength="19" placeholder="___________________">
+                <br>
+                <button onclick="checkMasterCode()" style="background: linear-gradient(135deg, #ff0055, #ff6600); font-size: 1.3em; padding: 20px 40px;">
+                    🚀 SYSTEME NEU STARTEN
+                </button>
+            </div>
+
+            <div id="feedbackMaster" class="feedback"></div>
+        </div>
+
+        <!-- Sieg-Screen -->
+        <div class="section" id="victory">
+            <div class="victory-screen">
+                <div class="emoji">🎉🚀🌟</div>
+                <h2>MISSION ERFOLGREICH!</h2>
+                <div class="emoji">🎊🏆✨</div>
+                
+                <img src="bilder/erfolg.jpg" alt="Erfolgreiche Mission" class="mission-image">
+                
+                <div class="story-text">
+                    <p style="font-size: 1.3em; color: #00ff88;">
+                        <strong>ALLE SYSTEME ONLINE!</strong>
+                    </p>
+                    <br>
+                    <p>Die Displays leuchten auf: </p>
+                    <p>🟢 Lebenserhaltung: ONLINE<br>
+                    🟢 Wasserproduktion: ONLINE<br>
+                    🟢 Atmosphärenkontrolle: ONLINE<br>
+                    🟢 Energieversorgung: ONLINE<br>
+                    🟢 Kommunikation: ONLINE</p>
+                    <br>
+                    <p>Aus den Lautsprechern ertönt die Stimme des Koloniekommandanten vom Mars:</p>
+                    <br>
+                    <p style="color: #00ccff; font-style: italic;">
+                        "Hier ist Phoenix Base! Wir empfangen euch wieder! Die Lebenserhaltungssysteme laufen auf vollen Touren. Ihr habt 50 Leben gerettet! Im Namen der gesamten Mars-Kolonie: DANKE!"
+                    </p>
+                    <br>
+                    <p><strong>IHR HABT DIE MARS-KOLONIE GERETTET!</strong></p>
+                    <br>
+                    <p>Eure abgeschlossene Zeit: <span id="finalTime" style="color: #00ff88; font-weight: bold;"></span></p>
+                    <br>
+                    <p style="color: #ffcc00;">
+                        🏆 Chemie-Notfall-Team: Level "MEISTER"!<br>
+                        Ihr seid wahre Chemie-Helden! 🧪✨
+                    </p>
+                </div>
+
+                <button onclick="location.reload()" style="margin-top: 30px; font-size: 1.2em;">
+                    🔄 NEUE MISSION STARTEN
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Lösungen
+        const solutions = {
+            puzzle1: {
+                code: "3232",
+                values: {
+                    p1_hg_al: 3,
+                    p1_ion_al: "3+",
+                    p1_hg_cl: 7,
+                    p1_ion_cl: "1-",
+                    p1_al_index: 1,
+                    p1_cl_index: 3,
+                    p1_coef_al: 2,
+                    p1_coef_cl2: 3,
+                    p1_coef_alcl3: 2
+                }
+            },
+            puzzle2: {
+                code: "3231",
+                values: {
+                    p2_hg_ca: 2,
+                    p2_ion_ca: "2+",
+                    p2_hg_n: 5,
+                    p2_ion_n: "3-",
+                    p2_ca_index: 3,
+                    p2_n_index: 2,
+                    p2_coef_ca: 3,
+                    p2_coef_n2: 1,
+                    p2_coef_ca3n2: 1
+                }
+            },
+            puzzle3: {
+                code: "5313",
+                values: {
+                    p3_ve_n: 5,
+                    p3_bonds_n: 3,
+                    p3_ve_h: 1,
+                    p3_bonds_h: 1,
+                    p3_h_index: 3,
+                    p3_coef_n2: 1,
+                    p3_coef_h2: 3,
+                    p3_coef_nh3: 2
+                }
+            },
+            puzzle4: {
+                code: "5316",
+                values: {
+                    p4_hg_p: 5,
+                    p4_ve_p: 5,
+                    p4_bonds_p: 3,
+                    p4_hg_cl: 7,
+                    p4_ve_cl: 7,
+                    p4_bonds_cl: 1,
+                    p4_cl_index: 3,
+                    p4_coef_p4: 1,
+                    p4_coef_cl2: 6,
+                    p4_coef_pcl3: 4
+                }
+            },
+            puzzle5: {
+                code: "221",
+                values: {
+                    p5_coef_h2o: 2,
+                    p5_coef_h2: 2,
+                    p5_coef_o2: 1
+                }
+            }
+        };
+
+        const masterCodeSolution = "3232323153135316221";
+
+        // Timer
+        let timeRemaining = 80 * 60; // 80 Minuten in Sekunden
+        let timerInterval;
+        let startTime;
+
+        // Gespeicherte Codes
+        let savedCodes = {
+            code1: "",
+            code2: "",
+            code3: "",
+            code4: "",
+            code5: ""
+        };
+
+        // Fortschritt
+        let progress = 0;
+
+        // Sterne generieren
+        function createStars() {
+            const starsContainer = document.getElementById('stars');
+            for (let i = 0; i < 100; i++) {
+                const star = document.createElement('div');
+                star.className = 'star';
+                star.style.left = Math.random() * 100 + '%';
+                star.style.top = Math.random() * 100 + '%';
+                star.style.animationDelay = Math.random() * 3 + 's';
+                starsContainer.appendChild(star);
+            }
+        }
+
+        function startMission() {
+            document.getElementById('intro').classList.remove('active');
+            document.getElementById('puzzle1').classList.add('active');
+            startTimer();
+            updateProgress(0);
+        }
+
+        function startTimer() {
+            startTime = Date.now();
+            timerInterval = setInterval(() => {
+                timeRemaining--;
+                updateTimerDisplay();
+                if (timeRemaining <= 0) {
+                    clearInterval(timerInterval);
+                    alert('⏰ ZEIT ABGELAUFEN! Die Mars-Kolonie konnte nicht gerettet werden...');
+                    location.reload();
+                }
+            }, 1000);
+        }
+
+        function updateTimerDisplay() {
+            const minutes = Math.floor(timeRemaining / 60);
+            const seconds = timeRemaining % 60;
+            document.getElementById('timer').textContent = 
+                `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        }
+
+        function updateProgress(level) {
+            progress = (level / 5) * 100;
+            document.getElementById('progressFill').style.width = progress + '%';
+        }
+
+        function checkInputs(puzzleNum) {
+            const solution = solutions[`puzzle${puzzleNum}`];
+            let allCorrect = true;
+            
+            for (const [key, value] of Object.entries(solution.values)) {
+                const input = document.getElementById(key);
+                if (input) {
+                    const inputValue = input.value.trim().toLowerCase();
+                    const solutionValue = value.toString().toLowerCase();
+                    if (inputValue !== solutionValue) {
+                        allCorrect = false;
+                        break;
+                    }
+                }
+            }
+            
+            return allCorrect;
+        }
+
+        function checkPuzzle1() {
+            const code = document.getElementById('code1').value.trim();
+            const feedback = document.getElementById('feedback1');
+            
+            if (code === solutions.puzzle1.code) {
+                savedCodes.code1 = code;
+                feedback.className = 'feedback success';
+                feedback.textContent = '✅ KORREKT! System 1 (Lebenserhaltung) reaktiviert! Weiter zum nächsten Reaktor!';
+                setTimeout(() => {
+                    document.getElementById('puzzle1').classList.remove('active');
+                    document.getElementById('puzzle2').classList.add('active');
+                    updateProgress(1);
+                }, 2000);
+            } else {
+                feedback.className = 'feedback error';
+                feedback.textContent = '❌ FALSCHER CODE! Überprüfe deine Berechnungen!';
+            }
+        }
+
+        function checkPuzzle2() {
+            const code = document.getElementById('code2').value.trim();
+            const feedback = document.getElementById('feedback2');
+            
+            if (code === solutions.puzzle2.code) {
+                savedCodes.code2 = code;
+                feedback.className = 'feedback success';
+                feedback.textContent = '✅ KORREKT! System 2 (Wasserproduktion) reaktiviert! Weiter!';
+                setTimeout(() => {
+                    document.getElementById('puzzle2').classList.remove('active');
+                    document.getElementById('puzzle3').classList.add('active');
+                    updateProgress(2);
+                }, 2000);
+            } else {
+                feedback.className = 'feedback error';
+                feedback.textContent = '❌ FALSCHER CODE! Kontrolliere die Indizes und Koeffizienten!';
+            }
+        }
+
+        function checkPuzzle3() {
+            const code = document.getElementById('code3').value.trim();
+            const feedback = document.getElementById('feedback3');
+            
+            if (code === solutions.puzzle3.code) {
+                savedCodes.code3 = code;
+                feedback.className = 'feedback success';
+                feedback.textContent = '✅ KORREKT! System 3 (Atmosphärenkontrolle) reaktiviert! Weiter!';
+                setTimeout(() => {
+                    document.getElementById('puzzle3').classList.remove('active');
+                    document.getElementById('puzzle4').classList.add('active');
+                    updateProgress(3);
+                }, 2000);
+            } else {
+                feedback.className = 'feedback error';
+                feedback.textContent = '❌ FALSCHER CODE! Überprüfe die Valenzelektronen und Koeffizienten!';
+            }
+        }
+
+        function checkPuzzle4() {
+            const code = document.getElementById('code4').value.trim();
+            const feedback = document.getElementById('feedback4');
+            
+            if (code === solutions.puzzle4.code) {
+                savedCodes.code4 = code;
+                feedback.className = 'feedback success';
+                feedback.textContent = '✅ KORREKT! System 4 (Energieversorgung) reaktiviert! Noch ein System!';
+                setTimeout(() => {
+                    document.getElementById('puzzle4').classList.remove('active');
+                    document.getElementById('puzzle5').classList.add('active');
+                    updateProgress(4);
+                }, 2000);
+            } else {
+                feedback.className = 'feedback error';
+                feedback.textContent = '❌ FALSCHER CODE! P₄ bedeutet 4 Phosphor-Atome! Rechne nochmal!';
+            }
+        }
+
+        function checkPuzzle5() {
+            const code = document.getElementById('code5').value.trim();
+            const feedback = document.getElementById('feedback5');
+            
+            if (code === solutions.puzzle5.code) {
+                savedCodes.code5 = code;
+                feedback.className = 'feedback success';
+                feedback.textContent = '✅ PERFEKT! System 5 (Kommunikation) reaktiviert! Jetzt zum Hauptcode!';
+                setTimeout(() => {
+                    document.getElementById('puzzle5').classList.remove('active');
+                    document.getElementById('finale').classList.add('active');
+                    updateProgress(5);
+                    displaySavedCodes();
+                }, 2000);
+            } else {
+                feedback.className = 'feedback error';
+                feedback.textContent = '❌ FALSCHER CODE! Zähle die H- und O-Atome genau!';
+            }
+        }
+
+        function displaySavedCodes() {
+            document.getElementById('display_code1').textContent = savedCodes.code1;
+            document.getElementById('display_code2').textContent = savedCodes.code2;
+            document.getElementById('display_code3').textContent = savedCodes.code3;
+            document.getElementById('display_code4').textContent = savedCodes.code4;
+            document.getElementById('display_code5').textContent = savedCodes.code5;
+        }
+
+        function checkMasterCode() {
+            const code = document.getElementById('masterCode').value.trim();
+            const feedback = document.getElementById('feedbackMaster');
+            
+            const expectedCode = savedCodes.code1 + savedCodes.code2 + savedCodes.code3 + 
+                               savedCodes.code4 + savedCodes.code5;
+            
+            if (code === expectedCode) {
+                clearInterval(timerInterval);
+                const elapsedTime = 80 * 60 - timeRemaining;
+                const minutes = Math.floor(elapsedTime / 60);
+                const seconds = elapsedTime % 60;
+                const timeString = `${minutes}:${seconds.toString().padStart(2, '0')} Minuten`;
+                
+                feedback.className = 'feedback success';
+                feedback.textContent = '✅ HAUPTCODE AKZEPTIERT! SYSTEME WERDEN NEU GESTARTET...';
+                setTimeout(() => {
+                    document.getElementById('finale').classList.remove('active');
+                    document.getElementById('victory').classList.add('active');
+                    document.getElementById('finalTime').textContent = timeString;
+                }, 2000);
+            } else {
+                feedback.className = 'feedback error';
+                feedback.textContent = '❌ FALSCHER HAUPTCODE! Setze alle 5 Codes zusammen (ohne Leerzeichen)!';
+            }
+        }
+
+        // Initialisierung
+        createStars();
+    </script>
+</body>
+</html>
